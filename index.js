@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express();
 const cors = require("cors");
 const res = require("express/lib/response");
@@ -26,12 +26,40 @@ async function run() {
         await client.connect();
         const productCollection = client.db("productsMela").collection("product");
 
+        // GET API
         app.get('/products', async (req, res) => {
             const query = {};
             const cursor = productCollection.find(query);
             const result = await cursor.toArray();
             res.send(result);
         })
+
+        // GET PARAMS
+        app.get('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const product = await productCollection.findOne(query);
+            res.send(product);
+        })
+
+        // POST API
+        app.post('/product', async (req, res) => {
+            const newUser = req.body;
+            const result = await productCollection.insertOne(newUser);
+            res.send(result);
+        })
+
+        // UPDATE API
+
+
+        //DELETE API
+        app.delete('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const product = await productCollection.deleteOne(query);
+            res.send(product);
+        })
+
     }
     finally {
 
