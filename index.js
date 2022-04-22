@@ -50,6 +50,23 @@ async function run() {
         })
 
         // UPDATE API
+        app.put('/product/:id', async (req, res) => {
+            const id = req.params.id;
+            const updatedUser = req.body;
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+
+            const updateDoc = {
+                $set: {
+                    name: updatedUser.name,
+                    email: updatedUser.email
+                },
+            };
+
+            const data = await productCollection.updateOne(filter, updateDoc, options);
+            res.send(data);
+
+        })
 
 
         //DELETE API
